@@ -69,3 +69,24 @@ h1 {
     background: #f3f4f6;
     text-align: left;
 }
+.progress-bar {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 4px;
+    margin-top: 15px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progress {
+    width: 0%;
+    height: 100%;
+    background-color: #4caf50;
+    animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}

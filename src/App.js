@@ -1,23 +1,33 @@
 import React, { useState } from "react";
-import "./App.css"; // Import the CSS file
+import "./App.css";
 
 function App() {
     const [text, setText] = useState("");
     const [result, setResult] = useState(null);
+    const [loading, setLoading] = useState(false); // New loading state
 
     const analyzeSentiment = async () => {
-        if (!text.trim()) return; // Prevent empty requests
+        if (!text.trim()) return;
 
-        const response = await fetch("https://fswd-bdy5.onrender.com/analyze", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ text })
-        });
+        setLoading(true); // Start loading
+        setResult(null); // Clear previous result
 
-        const data = await response.json();
-        setResult(data);
+        try {
+            const response = await fetch("https://fswd-bdy5.onrender.com/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text })
+            });
+
+            const data = await response.json();
+            setResult(data);
+        } catch (error) {
+            setResult({ sentiment: "Error", score: 0 });
+        }
+
+        setLoading(false); // Stop loading
     };
 
     return (
@@ -31,9 +41,17 @@ function App() {
                     placeholder="Enter text to analyze..."
                     className="input-box"
                 />
-                <button onClick={analyzeSentiment} className="analyze-btn">Analyze</button>
+                <button onClick={analyzeSentiment} className="analyze-btn" disabled={loading}>
+                    {loading ? "Analyzing..." : "Analyze"}
+                </button>
 
-                {result && (
+                {loading && (
+                    <div className="progress-bar">
+                        <div className="progress"></div>
+                    </div>
+                )}
+
+                {result && !loading && (
                     <div className="result-box">
                         <h2>Result:</h2>
                         <p><strong>Sentiment:</strong> {result.sentiment}</p>
